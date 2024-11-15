@@ -1,47 +1,54 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+  <div class="app-container">
+    <Sidebar :isCollapsed="isSidebarCollapsed" />
+    <div class="main-content">
+      <Header @toggleSidebar="toggleSidebar" :isSidebarCollapsed="isSidebarCollapsed"/>
+      <router-view></router-view>
+      <Footer />
     </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  </div>
 </template>
 
+<script>
+import Header from './components/Header.vue';
+import Sidebar from './components/Sidebar.vue';
+import Footer from './components/Footer.vue';
+
+export default {
+  components: {
+    Header,
+    Sidebar,
+    Footer,
+  },
+  data() {
+    return {
+      isSidebarCollapsed: false,
+    };
+  },
+  methods: {
+    toggleSidebar() {
+      this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    },
+  },
+};
+</script>
+
 <style scoped>
-header {
-  line-height: 1.5;
+.app-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
 }
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin-left: 0;
+  padding-left: 0;
+  width: 100%;
+  overflow: hidden;
 }
 </style>
