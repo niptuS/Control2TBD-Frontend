@@ -39,7 +39,7 @@ export default {
   },
   methods: {
     async handleRegister() {
-      const isRegistered = await register(this.name, this.username, this.email, this.rol, this.password);
+      const isRegistered = await register(this.name, this.username, this.password, this.email, this.rol);
 
       if (isRegistered) {
         try {
