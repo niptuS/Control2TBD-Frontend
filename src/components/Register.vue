@@ -39,13 +39,11 @@ export default {
   },
   methods: {
     async handleRegister() {
-      const isRegistered = await register(this.name, this.username, this.password, this.email, this.rol);
+      const isRegistered = await register(this.name, this.username, this.password, this.email, this.rol); // Registra al usuario
 
       if (isRegistered) {
         try {
-          console.log(this.username, this.password);
-          const response = await authenticateUser(this.username, this.password);
-          console.log(response);
+          const response = await authenticateUser(this.username, this.password); // Logea al usuario
           if (response) {
             this.$router.push({name: 'Profile'}); // Redirigir al perfil
           } else {
