@@ -1,18 +1,18 @@
 import axios from "axios";
+import { useAuthStore } from '../utils/authStore';
 
 axios.defaults.baseURL = 'http://localhost:8090';
 
-export function isAuthenticated() {
-    return localStorage.getItem('isLoggedIn') === 'true';
-}
-
 export function login() {
-    localStorage.setItem('isLoggedIn', 'true');
+    const authStore = useAuthStore();
+    authStore.login();
 }
 
 export function logout() {
-    localStorage.setItem('isLoggedIn', 'false');
+    const authStore = useAuthStore();
+    authStore.logout();
 }
+
 
 // función de prueba para manejar los logins
 export async function authenticateUser(username, password) {

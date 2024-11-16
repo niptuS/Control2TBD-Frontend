@@ -9,45 +9,43 @@
     <h1>Task Manager</h1>
 
     <!-- Botones de Iniciar Sesión y Registrarse -->
-    <div v-if="!isLoggedIn" class="auth-buttons">
+    <div v-if="!authStore.isLoggedIn" class="auth-buttons">
       <router-link to="/login" class="session-button">Iniciar Sesión</router-link>
       <router-link to="/register" class="session-button">Registrarse</router-link>
     </div>
 
     <!-- Botón de Cerrar Sesión -->
-    <button v-if="isLoggedIn" @click="logoutUser" class="session-button">
+    <button v-if="authStore.isLoggedIn" @click="logoutUser" class="session-button">
       Cerrar Sesión
     </button>
   </header>
 </template>
+
 <script>
+import { useAuthStore } from '../utils/authStore';
 import logoImage from '@/components/icons/taskmanagericon.png';
-import { isAuthenticated, logout } from '../utils/auth';
 
 export default {
   props: {
     isSidebarCollapsed: Boolean,
   },
-  data() {
+  setup(props, { emit }) {
+    const authStore = useAuthStore();
+
+    const toggleSidebar = () => {
+      emit('toggleSidebar');
+    };
+
+    const logoutUser = () => {
+      authStore.logout();
+    };
+
     return {
-      isLoggedIn: isAuthenticated(),
+      authStore,
+      toggleSidebar,
+      logoutUser,
       logoSrc: logoImage,
     };
-  },
-  methods: {
-    logoutUser() {
-      logout();
-      this.isLoggedIn = isAuthenticated();
-      this.$router.push('/');
-    },
-    toggleSidebar() {
-      this.$emit('toggleSidebar');
-    },
-  },
-  watch: {
-    '$route'() {
-      this.isLoggedIn = isAuthenticated();
-    },
   },
 };
 </script>

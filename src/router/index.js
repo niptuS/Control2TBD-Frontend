@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { isAuthenticated } from '../utils/auth';
+import { useAuthStore } from '../utils/authStore';
 
 import Home from '../components/Home.vue';
 import Profile from '../components/Profile.vue';
@@ -8,14 +8,13 @@ import Register from '../components/Register.vue';
 import CreateTaskForm from "@/components/CreateTaskForm.vue";
 import TaskList from "@/components/TaskList.vue";
 
-
 const routes = [
-    { path: '/', name: 'Home', component: Home  },
+    { path: '/', name: 'Home', component: Home },
     {
         path: '/perfil',
         name: 'Profile',
         component: Profile,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true },
     },
     { path: '/login', name: 'Login', component: Login },
     { path: '/register', name: 'Register', component: Register },
@@ -23,13 +22,13 @@ const routes = [
         path: '/crear-tarea',
         name: 'CreateTask',
         component: CreateTaskForm,
-        // meta: { requiresAuth: true }
+        meta: { requiresAuth: true },
     },
     {
         path: '/listar-tareas',
         name: 'TaskList',
         component: TaskList,
-        // meta: { requiresAuth: true }
+        meta: { requiresAuth: true },
     },
     { path: '/:catchAll(.*)', redirect: '/' },
 ];
@@ -40,10 +39,13 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    if (to.meta.requiresAuth && !isAuthenticated()) {
-        next('/');
+    const authStore = useAuthStore(); // Acceder al store de autenticación
+
+    if (to.meta.requiresAuth && !authStore.isLoggedIn) {
+        // Si la ruta requiere autenticación y el usuario no está autenticado
+        next('/login'); // Redirige al login
     } else {
-        next();
+        next(); // Deja que la navegación continúe
     }
 });
 

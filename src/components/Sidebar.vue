@@ -5,13 +5,13 @@
         <li>
           <router-link to="/inicio">Inicio</router-link>
         </li>
-        <li v-if="isLoggedIn">
+        <li v-if="authStore.isLoggedIn">
           <router-link to="/perfil">Perfil</router-link>
         </li>
-        <li v-if="isLoggedIn">
+        <li v-if="authStore.isLoggedIn">
           <router-link to="/crear-tarea">Crear Tarea</router-link>
         </li>
-        <li v-if="isLoggedIn">
+        <li v-if="authStore.isLoggedIn">
           <router-link to="/listar-tareas">Listar Tareas</router-link>
         </li>
       </ul>
@@ -20,15 +20,18 @@
 </template>
 
 <script>
-import { isAuthenticated } from '../utils/auth';
+import { useAuthStore } from '../utils/authStore'; // Asegúrate de que esta ruta sea correcta
 
 export default {
+  setup() {
+    const authStore = useAuthStore();
+    return {authStore}; // Retorna el store completo para usarlo en el template
+  },
   props: {
     isCollapsed: {
       type: Boolean,
       default: true,
     },
-    isLoggedIn: isAuthenticated()
   },
 };
 </script>
@@ -64,7 +67,6 @@ export default {
   display: block;
   transition: padding-left 0.3s ease;
 }
-
 
 .sidebar a:hover {
   text-decoration: underline;
