@@ -13,6 +13,11 @@ export default {
 </script>
 
 <style scoped>
+
+body{
+  min-height: 100vh;
+  min-width: 100vw;
+}
 .home {
   padding: 2rem;
   margin-top: 100px;

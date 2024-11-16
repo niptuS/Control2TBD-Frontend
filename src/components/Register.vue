@@ -2,6 +2,9 @@
   <div class="register">
     <h2>Registrarse</h2>
     <form @submit.prevent="handleRegister">
+      <label for="username">Nombre:</label>
+      <input type="text" id="name" v-model="name" required />
+
       <label for="username">Usuario:</label>
       <input type="text" id="username" v-model="username" required />
 
@@ -20,14 +23,14 @@
 </template>
 
 <script>
-import { login } from '../utils/auth';
-import axios from 'axios';
-import { useRouter } from 'vue-router';
+import {authenticateUser, register} from '../utils/auth';
+import axios from "axios";
 
 export default {
   name: 'Register',
   data() {
     return {
+      name: '',
       username: '',
       email: '',
       rol: '',
@@ -36,27 +39,28 @@ export default {
   },
   methods: {
     async handleRegister() {
-      // Algo asi pato :v
-      // try {
-      //   const response = await axios.post('/api/register', {
-      //     username: this.username,
-      //     email: this.email,
-      //     rol: this.rol,
-      //     password: this.password,
-      //   });
-      //
-      //   if (response.data.success) {
-      //     login();
-      //     this.$router.push({ name: 'Profile' });
-      //   } else {
-      //     alert('Error al crear la cuenta');
-      //   }
-      // } catch (error) {
-      //   console.error('Error al registrar:', error);
-      //   alert('Hubo un problema con el registro, por favor intente nuevamente.');
-      // }
+      const isRegistered = await register(this.name, this.username, this.email, this.rol, this.password);
+
+      if (isRegistered) {
+        try {
+          const response = await authenticateUser(this.username, this.password);
+          const token = response.headers['authorization'];
+
+          if (token) {
+            localStorage.setItem('jwt', token); // Guardar el token
+            this.$router.push({name: 'Profile'}); // Redirigir al perfil
+          } else {
+            alert('Error al iniciar sesión automáticamente');
+          }
+        } catch (error) {
+          console.error('Error al iniciar sesión después del registro:', error);
+          alert('Error al iniciar sesión automáticamente');
+        }
+      } else {
+        alert('Error al crear la cuenta');
+      }
     },
-  },
+  }
 };
 </script>
 

@@ -3,17 +3,16 @@
     <h2>Iniciar Sesión</h2>
     <form>
       <label for="username">Usuario:</label>
-      <input type="text" id="username" required />
+      <input v-model="username" type="text" id="username" required />
       <label for="password">Contraseña:</label>
-      <input type="password" id="password" required />
-      <button type="submit">Ingresar</button>
+      <input v-model="password" type="password" id="password" required />
+      <button onClick="handleLogin()" type="submit">Ingresar</button>
     </form>
   </div>
 </template>
 
 <script>
 import { authenticateUser } from '../utils/auth';
-import { useRouter } from 'vue-router';
 
 export default {
   name: 'Login',
