@@ -17,19 +17,25 @@ export function logout() {
 // función de prueba para manejar los logins
 export async function authenticateUser(username, password) {
     try {
-         const response = await axios.post('/api/authenticate', { username, password });
+        const response = await axios.post('/auth/login', { username, password });
 
-         if (response.data.isAuthenticated) {
-             login();
-             return true;
-         } else {
-             return false;
-         }
-     } catch (error) {
-         console.error('Error al autenticar al usuario:', error);
-         return false;
-     }
+        // Captura el JWT desde los headers
+        const token = response.headers['authorization']; // Headers son case-insensitive, pero Axios lo devuelve en minúsculas.
+
+        if (token) {
+            login(); // Marca al usuario como autenticado y cambia su Logging Status
+            localStorage.setItem('token', token); // Guarda solo el JWT
+            return true; // Login exitoso
+        } else {
+            console.log("Token no encontrado en los headers");
+            return false; // Falla si no hay token
+        }
+    } catch (error) {
+        console.error('Error al autenticar al usuario:', error.response?.data || error.message);
+        return false;
+    }
 }
+
 
 export async function register(name, username, password, email, rol) {
     try {

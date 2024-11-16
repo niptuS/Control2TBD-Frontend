@@ -1,12 +1,12 @@
 <template>
   <div class="login">
     <h2>Iniciar Sesión</h2>
-    <form>
+    <form @submit.prevent=handleLogin>
       <label for="username">Usuario:</label>
       <input v-model="username" type="text" id="username" required />
       <label for="password">Contraseña:</label>
       <input v-model="password" type="password" id="password" required />
-      <button onClick="handleLogin()" type="submit">Ingresar</button>
+      <button type="submit">Ingresar</button>
     </form>
   </div>
 </template>
@@ -31,7 +31,7 @@ export default {
       } else {
         alert('Usuario o contraseña incorrectos');
       }
-    },
+    }
   },
 };
 </script>
