@@ -39,7 +39,7 @@ export async function authenticateUser(username, password) {
 
 export async function register(name, username, password, email, rol) {
     try {
-        const response = await axios.post('/auth/register', { name, username, password, email, rol });
+        const response = await axios.post('/auth/register', { name, password, username, email, rol });
 
         if (response.status === 200) {
             return true;

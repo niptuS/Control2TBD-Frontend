@@ -39,15 +39,14 @@ export default {
   },
   methods: {
     async handleRegister() {
-      const isRegistered = await register(this.name, this.username, this.email, this.rol, this.password);
+      const isRegistered = await register(this.name, this.username, this.password, this.email, this.rol);
 
       if (isRegistered) {
         try {
+          console.log(this.username, this.password);
           const response = await authenticateUser(this.username, this.password);
-          const token = response.headers['authorization'];
-
-          if (token) {
-            localStorage.setItem('jwt', token); // Guardar el token
+          console.log(response);
+          if (response) {
             this.$router.push({name: 'Profile'}); // Redirigir al perfil
           } else {
             alert('Error al iniciar sesión automáticamente');
