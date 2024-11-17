@@ -58,12 +58,12 @@ export async function register(name, username, password, email, rol) {
 
 export async function createTask(title, description, deadline) {
     try {
-        console.log('Datos enviados:', title, description, deadline);
         const token = localStorage.getItem('token'); // Recupera el token JWT del almacenamiento local
         const userid = localStorage.getItem('id'); // Recupera el userId del almacenamiento local
+        const status = false;
         const response = await axios.post(
             '/api/v1/tasks/',
-            { title, description, deadline, userid },
+            { title, description, status, deadline, userid },
             {
                 headers: {
                     Authorization: `Bearer ${token}`, // Incluye el token JWT en el encabezado

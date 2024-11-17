@@ -38,20 +38,12 @@ export default {
         // Crear un objeto Date con la fecha seleccionada
         const deadlineDate = new Date(this.task.deadline);
 
-        // Ajustar la hora a las 12 AM
-        deadlineDate.setHours(0, 0, 0, 0);
-
-        // Verificar que el tiempo se haya ajustado correctamente
-        console.log('Fecha con hora ajustada:', deadlineDate);
-
         // Llamar a la función createTask con los datos del formulario
         const createdTask = await createTask(
             this.task.title,
             this.task.description,
             deadlineDate // Convertir la fecha con la hora ajustada
         );
-
-        console.log('Tarea creada con éxito:', createdTask);
 
         // Reiniciar el formulario
         this.task = { title: '', description: '', deadline: '' };
