@@ -25,7 +25,6 @@ export default {
   methods: {
     async handleLogin() {
       const isAuthenticated = await authenticateUser(this.username, this.password);
-
       if (isAuthenticated) {
         this.$router.push({ name: 'Profile' });
       } else {

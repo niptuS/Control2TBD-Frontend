@@ -11,9 +11,6 @@
       <label for="email">Correo:</label>
       <input type="email" id="email" v-model="email" required />
 
-      <label for="rol">¿Cuál es tu rol?</label>
-      <input type="text" id="rol" v-model="rol" required />
-
       <label for="password">Contraseña:</label>
       <input type="password" id="password" v-model="password" required />
 
@@ -24,7 +21,6 @@
 
 <script>
 import {authenticateUser, register} from '../utils/auth';
-import axios from "axios";
 
 export default {
   name: 'Register',
@@ -33,7 +29,7 @@ export default {
       name: '',
       username: '',
       email: '',
-      rol: '',
+      rol: 'USER',
       password: '',
     };
   },

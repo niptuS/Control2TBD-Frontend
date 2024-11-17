@@ -11,8 +11,8 @@
         <textarea id="description" v-model="task.description" rows="4"></textarea>
       </div>
       <div>
-        <label for="dueDate">Fecha de Vencimiento:</label>
-        <input type="date" id="dueDate" v-model="task.dueDate" required />
+        <label for="deadline">Fecha de Vencimiento:</label>
+        <input type="date" id="deadline" v-model="task.deadline" required />
       </div>
       <button type="submit">Crear Tarea</button>
     </form>
@@ -28,21 +28,36 @@ export default {
       task: {
         title: '',
         description: '',
-        dueDate: '',
+        deadline: '',
       },
     };
   },
   methods: {
     async submitTask() {
       try {
+        // Crear un objeto Date con la fecha seleccionada
+        const deadlineDate = new Date(this.task.deadline);
+
+        // Ajustar la hora a las 12 AM
+        deadlineDate.setHours(0, 0, 0, 0);
+
+        // Verificar que el tiempo se haya ajustado correctamente
+        console.log('Fecha con hora ajustada:', deadlineDate);
+
         // Llamar a la función createTask con los datos del formulario
-        const createdTask = await createTask(this.task);
+        const createdTask = await createTask(
+            this.task.title,
+            this.task.description,
+            deadlineDate // Convertir la fecha con la hora ajustada
+        );
+
         console.log('Tarea creada con éxito:', createdTask);
 
-        // Reiniciar el formulario o redirigir al usuario
-        this.task = { title: '', description: '', dueDate: '' };
+        // Reiniciar el formulario
+        this.task = { title: '', description: '', deadline: '' };
         alert('Tarea creada con éxito');
       } catch (error) {
+        console.error('Error:', error);
         alert('Hubo un error al crear la tarea.');
       }
     },

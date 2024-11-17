@@ -22,8 +22,12 @@ export async function authenticateUser(username, password) {
         // Captura el JWT desde los headers
         const token = response.headers['authorization']; // Headers son case-insensitive, pero Axios lo devuelve en minúsculas.
 
+        // Captura el userId desde el body
+        const userIdFound = response.data;
+
         if (token) {
             login(); // Marca al usuario como autenticado y cambia su Logging Status
+            localStorage.setItem('id', userIdFound); // Guarda solo el id
             localStorage.setItem('token', token); // Guarda solo el JWT
             return true; // Login exitoso
         } else {
@@ -52,12 +56,23 @@ export async function register(name, username, password, email, rol) {
 }
 
 
-export async function createTask(title, description, dueDate) {
+export async function createTask(title, description, deadline) {
     try {
-       const response = await axios.post('/api/v1/tasks/', title, description, dueDate);
-       return response.data;
+        console.log('Datos enviados:', title, description, deadline);
+        const token = localStorage.getItem('token'); // Recupera el token JWT del almacenamiento local
+        const userid = localStorage.getItem('id'); // Recupera el userId del almacenamiento local
+        const response = await axios.post(
+            '/api/v1/tasks/',
+            { title, description, deadline, userid },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Incluye el token JWT en el encabezado
+                },
+            }
+        );
+        return response.data;
     } catch (error) {
-        console.error('Error creando la tarea:', error);
+        console.error('Error creando la tarea:', error.response?.data || error.message);
         throw error; // Lanza el error
     }
 }
