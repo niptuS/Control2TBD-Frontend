@@ -1,7 +1,7 @@
 <template>
   <header class="header" :class="{'collapsed': !isSidebarCollapsed}">
     <button @click="toggleSidebar" class="sidebar-toggle-button">
-      {{ isSidebarCollapsed ? 'Expandir Sidebar' : 'Retraer Sidebar' }}
+      {{ isSidebarCollapsed ? 'Retraer Sidebar' : 'Expandir Sidebar' }}
     </button>
     <div class="logo">
       <img :src="logoSrc" alt="Task manager icon" />
