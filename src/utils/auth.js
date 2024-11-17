@@ -50,3 +50,14 @@ export async function register(name, username, password, email, rol) {
         return false;
     }
 }
+
+
+export async function createTask(title, description, dueDate) {
+    try {
+       const response = await axios.post('/api/v1/tasks/', title, description, dueDate);
+       return response.data;
+    } catch (error) {
+        console.error('Error creando la tarea:', error);
+        throw error; // Lanza el error
+    }
+}

@@ -65,13 +65,13 @@ export default {
   },
   methods: {
     async fetchTasks() {
-      // try {
-      //   const response = await axios.get('/api/tasks');
-      //   this.tasks = Array.isArray(response.data) ? response.data : [];
-      // } catch (error) {
-      //   console.error('Error al obtener las tareas:', error);
-      //   this.tasks = [];
-      // }
+      try {
+         const response = await axios.get('/api/v1/tasks');
+         this.tasks = Array.isArray(response.data) ? response.data : [];
+      } catch (error) {
+         console.error('Error al obtener las tareas:', error);
+         this.tasks = [];
+      }
     },
     editTask(task) {
       this.$emit('editTask', task);
