@@ -189,7 +189,7 @@ export default {
 
 <style scoped>
 .task-list {
-  max-width: 600px;
+  max-width: 800px;
   margin-top: 120px;
   margin-left: 100px;
 }

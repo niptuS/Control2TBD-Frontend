@@ -8,6 +8,11 @@
     </div>
     <h1>Task Manager</h1>
 
+    <!-- Mostrar el número de notificaciones -->
+    <div v-if="authStore.isLoggedIn" class="notifications">
+      <p>Notificaciones: {{ notificationCount }}</p>
+    </div>
+
     <!-- Botones de Iniciar Sesión y Registrarse -->
     <div v-if="!authStore.isLoggedIn" class="auth-buttons">
       <router-link to="/login" class="session-button">Iniciar Sesión</router-link>
@@ -22,8 +27,10 @@
 </template>
 
 <script>
+import { getNotifiedTasks } from '../utils/task';
 import { useAuthStore } from '../utils/authStore';
 import logoImage from '@/components/icons/taskmanagericon.png';
+import { ref, onMounted } from 'vue';
 
 export default {
   props: {
@@ -31,6 +38,24 @@ export default {
   },
   setup(props, { emit }) {
     const authStore = useAuthStore();
+    const notificationCount = ref(0); 
+
+    const fetchNotifiedTasks = async () => {
+      if (authStore.isLoggedIn) {
+        try {
+          const userId = localStorage.getItem('id'); 
+          const tasks = await getNotifiedTasks(userId);
+          console.log('Tareas notificadas:', tasks);
+          notificationCount.value = tasks.length; 
+        } catch (error) {
+          console.error('Error al obtener las tareas notificadas:', error);
+        }
+      }
+    };
+
+    onMounted(() => {
+      fetchNotifiedTasks();
+    });
 
     const toggleSidebar = () => {
       emit('toggleSidebar');
@@ -45,10 +70,12 @@ export default {
       toggleSidebar,
       logoutUser,
       logoSrc: logoImage,
+      notificationCount,
     };
   },
 };
 </script>
+
 
 <style scoped>
 .header {
