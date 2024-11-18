@@ -24,10 +24,11 @@ export async function createTask(title, description, deadline) {
 
 export async function getNotifiedTasks(userid){
     try {
-        const token = localStorage.getItem('token'); 
+        const token = localStorage.getItem('token');
+        console.log(userid);
         const response = await axios.get(`/api/v1/tasks/${userid}/tasks/notify`, {
             headers: {
-                Authorization: `Bearer ${token}`, 
+                Authorization: `Bearer ${token}`,
             },
         });
         return response.data;
@@ -36,3 +37,4 @@ export async function getNotifiedTasks(userid){
         throw error;
     }
 }
+

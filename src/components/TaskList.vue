@@ -34,6 +34,8 @@
       </li>
     </ul>
 
+
+
     <!-- Modal para editar tarea -->
     <div v-if="isEditing" class="modal">
       <div class="modal-content">
@@ -59,6 +61,24 @@
       </div>
     </div>
   </div>
+  <div class="task-notify"> Tareas por caducar(!)
+    <ul>
+      <li v-for="task in filteredNotifiedTasks" :key="task.id" class="task-item">
+        <div class="task-info">
+          <h3>{{ task.title }}</h3>
+          <p>{{ task.description }}</p>
+          <small>Vencimiento: {{ task.deadline.split('T')[0] }}</small>
+        </div>
+        <div class="task-actions">
+          <button @click="editTask(task)">Editar Tarea</button>
+          <button @click="toggleTaskCompletion(task)">
+            {{ task.status ? 'Desmarcar Completada' : 'Marcar Completada' }}
+          </button>
+          <button @click="confirmDeleteTask(task)">Eliminar Tarea</button>
+        </div>
+      </li>
+    </ul>
+  </div>
 </template>
 
 
@@ -69,6 +89,7 @@ export default {
   data() {
     return {
       tasks: [],
+
       filters: {
         status: 'all',
         keyword: '',
@@ -89,6 +110,12 @@ export default {
             .toLowerCase()
             .includes(this.filters.keyword.toLowerCase());
         return matchesStatus && matchesKeyword;
+      });
+    },
+    filteredNotifiedTasks() {
+      return this.tasks.filter((task) => {
+        const currentDate = Date.now();
+        return (currentDate - Date.parse(task.deadline)) < 1;
       });
     },
   },
@@ -189,6 +216,16 @@ export default {
 
 <style scoped>
 .task-list {
+  position: relative;
+  max-width: 800px;
+  margin-top: 120px;
+  margin-left: 100px;
+}
+.task-notify
+{
+  position: absolute;
+  left:900px;
+  top:20px;
   max-width: 800px;
   margin-top: 120px;
   margin-left: 100px;

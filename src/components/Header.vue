@@ -30,7 +30,9 @@
 import { getNotifiedTasks } from '../utils/task';
 import { useAuthStore } from '../utils/authStore';
 import logoImage from '@/components/icons/taskmanagericon.png';
-import { ref, onMounted } from 'vue';
+import {ref, onMounted, watch} from 'vue';
+import axios from "axios";
+
 
 export default {
   props: {
@@ -38,24 +40,34 @@ export default {
   },
   setup(props, { emit }) {
     const authStore = useAuthStore();
-    const notificationCount = ref(0); 
+    const notificationCount = ref(0);
 
     const fetchNotifiedTasks = async () => {
       if (authStore.isLoggedIn) {
         try {
-          const userId = localStorage.getItem('id'); 
-          const tasks = await getNotifiedTasks(userId);
+          const token = local.getItem('token');
+          const userId = localStorage.getItem('id');
+          //const tasks = await getNotifiedTasks(userId);
+          const response = await axios.get(`/api/v1/tasks/${userId}/tasks/notify`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const tasks = response.data
           console.log('Tareas notificadas:', tasks);
-          notificationCount.value = tasks.length; 
+          notificationCount.value = tasks.length;
         } catch (error) {
           console.error('Error al obtener las tareas notificadas:', error);
         }
       }
     };
 
+
+
     onMounted(() => {
       fetchNotifiedTasks();
     });
+
 
     const toggleSidebar = () => {
       emit('toggleSidebar');
@@ -73,6 +85,8 @@ export default {
       notificationCount,
     };
   },
+
+
 };
 </script>
 
