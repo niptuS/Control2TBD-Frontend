@@ -25,7 +25,6 @@ export async function createTask(title, description, deadline) {
 export async function getNotifiedTasks(userid){
     try {
         const token = localStorage.getItem('token');
-        console.log(userid);
         const response = await axios.get(`/api/v1/tasks/${userid}/tasks/notify`, {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -38,3 +37,17 @@ export async function getNotifiedTasks(userid){
     }
 }
 
+export async function getTasks(userid) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`/api/v1/tasks/${userid}/tasks`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error obteniendo tareas:', error);
+        throw error;
+    }
+}

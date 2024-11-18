@@ -61,9 +61,10 @@
       </div>
     </div>
   </div>
+
   <div class="task-notify"> Tareas por caducar(!)
-    <ul>
-      <li v-for="task in filteredNotifiedTasks" :key="task.id" class="task-item">
+    <ul v-if="notifiedtasks.length">
+      <li v-for="task in notifiedtasks" :key="task.id" class="task-item">
         <div class="task-info">
           <h3>{{ task.title }}</h3>
           <p>{{ task.description }}</p>
@@ -78,18 +79,20 @@
         </div>
       </li>
     </ul>
+    <p v-else>No hay tareas por notificar.</p>
   </div>
 </template>
 
 
 <script>
+import { getNotifiedTasks, getTasks } from '../utils/task';
 import axios from 'axios';
 
 export default {
   data() {
     return {
       tasks: [],
-
+      notifiedtasks: [],
       filters: {
         status: 'all',
         keyword: '',
@@ -112,31 +115,37 @@ export default {
         return matchesStatus && matchesKeyword;
       });
     },
-    filteredNotifiedTasks() {
-      return this.tasks.filter((task) => {
-        const currentDate = Date.now();
-        return (currentDate - Date.parse(task.deadline)) < 1;
-      });
-    },
   },
   methods: {
     async fetchTasks() {
       try {
-        const token = localStorage.getItem('token'); // Recupera el token JWT del almacenamiento local
-        const userid = localStorage.getItem('id'); // Recupera el userId del almacenamiento local
-        const response = await axios.get(
-            `/api/v1/tasks/${userid}/tasks`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`, // Incluye el token JWT en el encabezado
-              }
-            });
-        this.tasks = Array.isArray(response.data) ? response.data : [];
+        const userid = localStorage.getItem('id');
+        const response = await getTasks(userid);
+        if (Array.isArray(response)) {
+          this.tasks = response;
+        } else {
+          console.error('Los datos obtenidos no son un array:', response.data);
+        }
       } catch (error) {
          console.error('Error al obtener las tareas:', error);
          this.tasks = [];
       }
     },
+    async fetchNotifiedTasks() {
+      try {
+        const userId = localStorage.getItem('id');
+        const response = await getNotifiedTasks(userId);
+        if (Array.isArray(response)) {
+          this.notifiedtasks = response;
+        } else {
+          console.error('Los datos obtenidos no son un array:', response.data);
+        }
+      } catch (error) {
+        console.error('Error al obtener las tareas notificadas:', error);
+      }
+    },
+
+
     editTask(task) {
       this.editableTask = { ...task };
       this.isEditing = true;
@@ -210,7 +219,9 @@ export default {
   },
   mounted() {
     this.fetchTasks();
+    this.fetchNotifiedTasks();
   },
+
 };
 </script>
 
