@@ -8,10 +8,14 @@
     </div>
     <h1>Task Manager</h1>
 
-    <!-- Mostrar el número de notificaciones -->
-    <div v-if="authStore.isLoggedIn" class="notifications">
-      <p>Notificaciones: {{ notificationCount }}</p>
-    </div>
+    <!-- Botón de Notificaciones -->
+    <button 
+      class="notification-button"
+      :class="{'has-notifications': notificationCount > 0}" 
+      @click="goToTaskList"
+    >
+      Notificaciones: {{ notificationCount }}
+    </button>
 
     <!-- Botones de Iniciar Sesión y Registrarse -->
     <div v-if="!authStore.isLoggedIn" class="auth-buttons">
@@ -27,11 +31,10 @@
 </template>
 
 <script>
-import { getNotifiedTasks } from '../utils/task';
+import { useNotificationStore } from '../utils/notificationStore';
 import { useAuthStore } from '../utils/authStore';
 import logoImage from '@/components/icons/taskmanagericon.png';
-import {ref, onMounted, watch} from 'vue';
-//import axios from "axios";
+import { computed } from 'vue';
 
 export default {
   props: {
@@ -39,31 +42,8 @@ export default {
   },
   setup(props, { emit }) {
     const authStore = useAuthStore();
-    const notificationCount = ref(0);
-
-    const fetchNotifiedTasks = async () => {
-      if (authStore.isLoggedIn) {
-        try {
-          const token = localStorage.getItem('token');
-          const userId = localStorage.getItem('id');
-          const tasks = await getNotifiedTasks(userId);
-          //const response = await axios.get(`/api/v1/tasks/${userId}/tasks/notify`, {
-          //  headers: {
-          //    Authorization: `Bearer ${token}`,
-          //  },
-          //});
-          //const tasks = response.data
-          notificationCount.value = tasks.length;
-        } catch (error) {
-          console.error('Error al obtener las tareas notificadas:', error);
-        }
-      }
-    };
-
-    onMounted(() => {
-      fetchNotifiedTasks();
-    });
-
+    const notificationStore = useNotificationStore();
+    const notificationCount = computed(() => notificationStore.notificationCount);
 
     const toggleSidebar = () => {
       emit('toggleSidebar');
@@ -75,13 +55,18 @@ export default {
 
     return {
       authStore,
+      notificationCount,
       toggleSidebar,
       logoutUser,
       logoSrc: logoImage,
-      notificationCount,
     };
   },
 
+  methods: {
+    goToTaskList() {
+      this.$router.push('/listar-tareas'); 
+    },
+  }
 
 };
 </script>
@@ -131,5 +116,23 @@ export default {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.notification-button {
+  background-color: white;
+  color: black;
+  border: 1px solid #ccc;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.notification-button.has-notifications {
+  background-color: red;
+  color: white;
+}
+
+.notification-button:hover {
+  background-color: #ff4d4d;
+  color: white;
 }
 </style>

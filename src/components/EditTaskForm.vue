@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     editTask() {
-      // Aqui hacer la petición al backend, hola pato :v
+      // Aqui hacer la petición al backend
       // axios.put(`/api/tasks/${this.task.id}`, this.task)
       //   .then(response => {
       //     this.$emit('taskUpdated', response.data);

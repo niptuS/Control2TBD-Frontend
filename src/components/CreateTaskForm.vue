@@ -21,6 +21,7 @@
 
 <script>
 import { createTask } from '../utils/auth';
+import { useNotificationStore } from '../utils/notificationStore';
 
 export default {
   data() {
@@ -44,6 +45,10 @@ export default {
             this.task.description,
             deadlineDate // Convertir la fecha con la hora ajustada
         );
+
+        // Actualizar el store de notificaciones
+        const notificationStore = useNotificationStore();
+        await notificationStore.fetchNotifiedTasks();
 
         // Reiniciar el formulario
         this.task = { title: '', description: '', deadline: '' };

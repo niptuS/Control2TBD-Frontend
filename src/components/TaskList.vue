@@ -4,6 +4,7 @@
 
     <!-- Filtros de búsqueda -->
     <div class="filters">
+      
       <select v-model="filters.status">
         <option value="all">Todas</option>
         <option value="completed">Completadas</option>
@@ -62,9 +63,10 @@
     </div>
   </div>
 
-  <div class="task-notify"> Tareas por caducar(!)
-    <ul v-if="notifiedtasks.length">
-      <li v-for="task in notifiedtasks" :key="task.id" class="task-item">
+  <div class="task-notify"> 
+    <h2>Tareas por caducar(!)</h2>
+    <ul v-if="notifiedTasks?.length">
+      <li v-for="task in notifiedTasks" :key="task.id" class="task-item">
         <div class="task-info">
           <h3>{{ task.title }}</h3>
           <p>{{ task.description }}</p>
@@ -85,14 +87,14 @@
 
 
 <script>
-import { getNotifiedTasks, getTasks } from '../utils/task';
+import { getTasks } from '../utils/task';
+import { useNotificationStore } from '../utils/notificationStore';
 import axios from 'axios';
 
 export default {
   data() {
     return {
       tasks: [],
-      notifiedtasks: [],
       filters: {
         status: 'all',
         keyword: '',
@@ -115,7 +117,15 @@ export default {
         return matchesStatus && matchesKeyword;
       });
     },
+    notifiedTasks() {
+      // Acceder directamente a notifiedTasks desde el store
+      const notificationStore = useNotificationStore();
+      return notificationStore.notifiedTasks;
+    },
   },
+
+
+
   methods: {
     async fetchTasks() {
       try {
@@ -131,25 +141,12 @@ export default {
          this.tasks = [];
       }
     },
-    async fetchNotifiedTasks() {
-      try {
-        const userId = localStorage.getItem('id');
-        const response = await getNotifiedTasks(userId);
-        if (Array.isArray(response)) {
-          this.notifiedtasks = response;
-        } else {
-          console.error('Los datos obtenidos no son un array:', response.data);
-        }
-      } catch (error) {
-        console.error('Error al obtener las tareas notificadas:', error);
-      }
-    },
-
 
     editTask(task) {
       this.editableTask = { ...task };
       this.isEditing = true;
     },
+
     async updateTask() {
       try {
         const token = localStorage.getItem('token'); // Token JWT
@@ -171,14 +168,20 @@ export default {
         }
         this.isEditing = false;
         this.editableTask = null;
+
+        const notificationStore = useNotificationStore();
+        await notificationStore.fetchNotifiedTasks();        
+
       } catch (error) {
         console.error('Error al actualizar la tarea:', error);
       }
     },
+
     cancelEdit() {
       this.isEditing = false;
       this.editableTask = null;
     },
+
     async toggleTaskCompletion(task) {
       try {
         const token = localStorage.getItem('token'); // Token JWT
@@ -194,6 +197,10 @@ export default {
         if (index !== -1) {
           this.tasks[index] = response.data; // Actualiza la tarea en la lista local
         }
+
+        // Actualizar notifiedTasks desde el store
+        const notificationStore = useNotificationStore();
+        await notificationStore.fetchNotifiedTasks();
       } catch (error) {
         console.error('Error al actualizar el estado de la tarea:', error);
       }
@@ -211,6 +218,9 @@ export default {
           });
           // Elimina la tarea de la lista local
           this.tasks = this.tasks.filter((t) => t.taskid !== task.taskid);
+
+          const notificationStore = useNotificationStore();
+          await notificationStore.fetchNotifiedTasks();
         } catch (error) {
           console.error('Error al eliminar la tarea:', error);
         }
@@ -219,7 +229,6 @@ export default {
   },
   mounted() {
     this.fetchTasks();
-    this.fetchNotifiedTasks();
   },
 
 };

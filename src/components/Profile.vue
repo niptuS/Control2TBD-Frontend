@@ -7,7 +7,7 @@
       <p><strong>Email:</strong> {{ user.email }}</p>
 
       <h1>Notificaciones</h1>
-      <form @submit.prevent="updateNotifier">
+      <form @submit.prevent="updateNotifications">
         <div>
           <label for="enabled">¿Activado?:</label>
           <input type="checkbox" id="enabled" v-model="notifier.enabled" />
@@ -58,7 +58,7 @@ export default {
     }
   },
   methods: {
-    async updateNotifier() {
+    async updateNotifications() {
       try {
         await updateNotifier(this.notifier);
         alert('Notificaciones actualizadas con éxito.');
